@@ -33,7 +33,7 @@ type WsClient struct {
 	conn       *websocket.Conn
 	sendCh     chan string //发消息队列
 	resCh      chan *Msg   //收消息队列
-	// errCh      chan *ErrData       //错误队列
+
 	errCh chan *Msg
 	regCh map[Event]chan *Msg //请求响应队列
 
@@ -71,15 +71,15 @@ func (this *Msg) Print() {
 }
 
 /*
-
- */
+	订阅结果封装后的消息结构体
+*/
 type ProcessDetail struct {
 	EndPoint string        `json:"endPoint"`
-	ReqInfo  string        `json:"ReqInfo"`
-	SendTime time.Time     `json:"sendTime"`
-	RecvTime time.Time     `json:"recvTime"`
-	UsedTime time.Duration `json:"UsedTime"`
-	Data     []*Msg        `json:"data"`
+	ReqInfo  string        `json:"ReqInfo"`  //订阅请求
+	SendTime time.Time     `json:"sendTime"` //发送订阅请求的时间
+	RecvTime time.Time     `json:"recvTime"` //接受到订阅结果的时间
+	UsedTime time.Duration `json:"UsedTime"` //耗时
+	Data     []*Msg        `json:"data"`     //订阅结果数据
 }
 
 func (p *ProcessDetail) String() string {
@@ -236,7 +236,7 @@ func (a *WsClient) Start() error {
 	}
 }
 
-// 阻塞启动
+// 客户端退出消息channel
 func (a *WsClient) IsQuit() <-chan struct{} {
 	return a.quitCh
 }
