@@ -12,7 +12,7 @@ OKEX go版本的v5sdk。
 		PassPhrase: "xxxx",
 	}
 
-	// 模拟环境表示是否为模拟环境
+	// 第三个参数代表是否为模拟环境，更多信息查看接口说明
 	cli := NewRESTClient("https://www.okex.win", &apikey, true)
 	rsp, err := cli.Get(context.Background(), "/api/v5/account/balance", nil)
 	if err != nil {
