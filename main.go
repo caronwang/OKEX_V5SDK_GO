@@ -118,13 +118,40 @@ func wsPub() {
 		log.Println(err)
 		return
 	}
+
+	// 订阅产品频道
+	var args []map[string]string
+	arg := make(map[string]string)
+	arg["instType"] = FUTURES
+	//arg["instType"] = OPTION
+	args = append(args, arg)
+
+	start := time.Now()
+	res, _, err := r.PubInstruemnts(OP_SUBSCRIBE, args)
+	if res {
+		usedTime := time.Since(start)
+		fmt.Println("订阅成功！", usedTime.String())
+	} else {
+		fmt.Println("订阅失败！", err)
+	}
+
+	time.Sleep(30 * time.Second)
+
+	start = time.Now()
+	res, _, err = r.PubInstruemnts(OP_UNSUBSCRIBE, args)
+	if res {
+		usedTime := time.Since(start)
+		fmt.Println("取消订阅成功！", usedTime.String())
+	} else {
+		fmt.Println("取消订阅失败！", err)
+	}
 }
 
 func main() {
 	// 公共订阅
 	wsPub()
-	// 私有订阅
-	wsPriv()
-	// rest请求
-	REST()
+	// // 私有订阅
+	// wsPriv()
+	// // rest请求
+	// REST()
 }

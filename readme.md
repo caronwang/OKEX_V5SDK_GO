@@ -32,7 +32,7 @@ OKEX go版本的v5sdk。
 
 ## WS订阅
 
-### 公有频道
+### 私有频道
 ```go
     ep := "wss://ws.okex.com:8443/ws/v5/private?brokerId=9999"
 
@@ -91,9 +91,9 @@ OKEX go版本的v5sdk。
 		fmt.Println("取消订阅失败！", err)
 	}
 ```
-更多示例请查看ws/ws_pub_channel_test.go
+更多示例请查看ws/ws_priv_channel_test.go  
 
-### 私有频道
+### 公有频道
 ```go
     ep := "wss://ws.okex.com:8443/ws/v5/public?brokerId=9999"
 
@@ -111,8 +111,35 @@ OKEX go版本的v5sdk。
 		log.Println(err)
 		return
 	}
+
+	// 订阅产品频道
+	var args []map[string]string
+	arg := make(map[string]string)
+	arg["instType"] = FUTURES
+	//arg["instType"] = OPTION
+	args = append(args, arg)
+
+	start := time.Now()
+	res, _, err := r.PubInstruemnts(OP_SUBSCRIBE, args)
+	if res {
+		usedTime := time.Since(start)
+		fmt.Println("订阅成功！", usedTime.String())
+	} else {
+		fmt.Println("订阅失败！", err)
+	}
+
+	time.Sleep(30 * time.Second)
+
+	start = time.Now()
+	res, _, err = r.PubInstruemnts(OP_UNSUBSCRIBE, args)
+	if res {
+		usedTime := time.Since(start)
+		fmt.Println("取消订阅成功！", usedTime.String())
+	} else {
+		fmt.Println("取消订阅失败！", err)
+	}
 ```
-更多示例请查看ws/ws_priv_channel_test.go
+更多示例请查看ws/ws_pub_channel_test.go  
 
 # 联系方式
 邮箱:caron_co@163.com  
