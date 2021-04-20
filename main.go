@@ -62,7 +62,7 @@ func wsPriv() {
 		log.Println(err)
 		return
 	}
-
+	defer r.Stop()
 	var res bool
 
 	res, _, err = r.Login(apikey, secretKey, passphrase)
@@ -118,7 +118,7 @@ func wsPub() {
 		log.Println(err)
 		return
 	}
-
+	defer r.Stop()
 	// 订阅产品频道
 	var args []map[string]string
 	arg := make(map[string]string)
@@ -147,11 +147,72 @@ func wsPub() {
 	}
 }
 
+// websocket交易
+func wsJrpc() {
+	ep := "wss://ws.okex.com:8443/ws/v5/private?brokerId=9999"
+
+	// 填写您自己的APIKey信息
+	apikey := "xxxx"
+	secretKey := "xxxxx"
+	passphrase := "xxxxx"
+
+	var res bool
+	var req_id string
+
+	// 创建ws客户端
+	r, err := NewWsClient(ep)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	// 设置连接超时
+	r.SetDailTimeout(time.Second * 2)
+	err = r.Start()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	defer r.Stop()
+
+	res, _, err = r.Login(apikey, secretKey, passphrase)
+	if res {
+		fmt.Println("登录成功！")
+	} else {
+		fmt.Println("登录失败！", err)
+		return
+	}
+
+	start := time.Now()
+	param := map[string]interface{}{}
+	param["instId"] = "BTC-USDT"
+	param["tdMode"] = "cash"
+	param["side"] = "buy"
+	param["ordType"] = "market"
+	param["sz"] = "200"
+	req_id = "00001"
+
+	res, _, err = r.PlaceOrder(req_id, param)
+	if res {
+		usedTime := time.Since(start)
+		fmt.Println("下单成功！", usedTime.String())
+	} else {
+		usedTime := time.Since(start)
+		fmt.Println("下单失败！", usedTime.String(), err)
+	}
+}
+
 func main() {
 	// 公共订阅
 	wsPub()
-	// // 私有订阅
-	// wsPriv()
-	// // rest请求
-	// REST()
+
+	// 私有订阅
+	wsPriv()
+
+	// websocket交易
+	wsJrpc()
+
+	// rest请求
+	REST()
 }

@@ -30,7 +30,7 @@ OKEX go版本的v5sdk，仅供学习交流使用。
  ```
 更多示例请查看rest/rest_test.go  
 
-## WS订阅
+## websocket订阅
 
 ### 私有频道
 ```go
@@ -55,6 +55,7 @@ OKEX go版本的v5sdk，仅供学习交流使用。
 		log.Println(err)
 		return
 	}
+	defer r.Stop()
 
 	var res bool
 
@@ -104,6 +105,7 @@ OKEX go版本的v5sdk，仅供学习交流使用。
 		return
 	}
 
+	
 	// 设置连接超时
 	r.SetDailTimeout(time.Second * 2)
 	err = r.Start()
@@ -111,6 +113,8 @@ OKEX go版本的v5sdk，仅供学习交流使用。
 		log.Println(err)
 		return
 	}
+
+	defer r.Stop()
 
 	// 订阅产品频道
 	var args []map[string]string
@@ -140,6 +144,65 @@ OKEX go版本的v5sdk，仅供学习交流使用。
 	}
 ```
 更多示例请查看ws/ws_pub_channel_test.go  
+
+## websocket交易
+```go
+    ep := "wss://ws.okex.com:8443/ws/v5/private?brokerId=9999"
+
+	// 填写您自己的APIKey信息
+	apikey := "xxxx"
+	secretKey := "xxxxx"
+	passphrase := "xxxxx"
+
+	var res bool
+	var req_id string
+
+	// 创建ws客户端
+	r, err := NewWsClient(ep)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	// 设置连接超时
+	r.SetDailTimeout(time.Second * 2)
+	err = r.Start()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	defer r.Stop()
+
+	res, _, err = r.Login(apikey, secretKey, passphrase)
+	if res {
+		fmt.Println("登录成功！")
+	} else {
+		fmt.Println("登录失败！", err)
+		return
+	}
+
+	start := time.Now()
+	param := map[string]interface{}{}
+	param["instId"] = "BTC-USDT"
+	param["tdMode"] = "cash"
+	param["side"] = "buy"
+	param["ordType"] = "market"
+	param["sz"] = "200"
+	req_id = "00001"
+
+	// 单个下单
+	res, _, err = r.PlaceOrder(req_id, param)
+	if res {
+		usedTime := time.Since(start)
+		fmt.Println("下单成功！", usedTime.String())
+	} else {
+		usedTime := time.Since(start)
+		fmt.Println("下单失败！", usedTime.String(), err)
+	}
+
+```
+更多示例请查看ws/ws_jrpc_test.go  
 
 # 联系方式
 邮箱:caron_co@163.com  
