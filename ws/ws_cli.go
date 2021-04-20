@@ -702,7 +702,7 @@ func (a *WsClient) AddDepthHook(fn ReceivedDepthDataCallback) error {
 }
 
 /*
-	添加JRPC消息处理的回调函数
+	添加错误类型消息处理的回调函数
 */
 func (a *WsClient) AddErrMsgHook(fn ReceivedDataCallback) error {
 	a.OnErrorHook = fn

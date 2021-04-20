@@ -210,6 +210,74 @@ OKEX go版本的v5sdk，仅供学习交流使用。
 ```
 更多示例请查看ws/ws_jrpc_test.go  
 
+## wesocket推送
+websocket推送数据分为两种类型数据:`普通推送数据`和`深度类型数据`。  
+
+```go
+ws/wImpl/BookData.go
+
+// 普通推送
+type MsgData struct {
+	Arg  map[string]string `json:"arg"`
+	Data []interface{}     `json:"data"`
+}
+
+// 深度数据
+type DepthData struct {
+	Arg    map[string]string `json:"arg"`
+	Action string            `json:"action"`
+	Data   []DepthDetail     `json:"data"`
+}
+```
+如果需要对推送数据做处理用户可以自定义回调函数:
+1. 全局消息处理的回调函数  
+该回调函数会处理所有从服务端接受到的数据。
+```go
+/*
+	添加全局消息处理的回调函数
+*/
+func (a *WsClient) AddMessageHook(fn ReceivedDataCallback) error {
+	a.onMessageHook = fn
+	return nil
+}
+```
+使用方法参见 ws/ws_test.go中测试用例TestAddMessageHook。
+
+2. 订阅消息处理回调函数  
+可以处理所有非深度类型的数据，包括 订阅/取消订阅，普通推送数据。
+```go
+/*
+	添加订阅消息处理的回调函数
+*/
+func (a *WsClient) AddBookMsgHook(fn ReceivedMsgDataCallback) error {
+	a.onBookMsgHook = fn
+	return nil
+}
+```
+使用方法参见 ws/ws_test.go中测试用例TestAddBookedDataHook。
+
+
+3. 深度消息处理的回调函数  
+这里需要说明的是，Wsclient提供了深度数据管理和自动checksum的功能，用户如果需要关闭此功能，只需要调用EnableAutoDepthMgr方法。
+```go
+/*
+	添加深度消息处理的回调函数
+*/
+func (a *WsClient) AddDepthHook(fn ReceivedDepthDataCallback) error {
+	a.onDepthHook = fn
+	return nil
+}
+```
+使用方法参见 ws/ws_pub_channel_test.go中测试用例TestOrderBooks。
+
+4. 错误消息类型回调函数  
+```go
+func (a *WsClient) AddErrMsgHook(fn ReceivedDataCallback) error {
+	a.OnErrorHook = fn
+	return nil
+}
+```
+
 # 联系方式
 邮箱:caron_co@163.com  
 微信:caron_co
