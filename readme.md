@@ -67,13 +67,14 @@ OKEX go版本的v5sdk，仅供学习交流使用。
 		return
 	}
 
-	// 订阅账户频道
+	
 	var args []map[string]string
 	arg := make(map[string]string)
 	arg["ccy"] = "BTC"
 	args = append(args, arg)
 
 	start := time.Now()
+	// 订阅账户频道
 	res, _, err = r.PrivAccout(OP_SUBSCRIBE, args)
 	if res {
 		usedTime := time.Since(start)
@@ -84,6 +85,7 @@ OKEX go版本的v5sdk，仅供学习交流使用。
 
 	time.Sleep(100 * time.Second)
 	start = time.Now()
+	// 取消订阅账户频道
 	res, _, err = r.PrivAccout(OP_UNSUBSCRIBE, args)
 	if res {
 		usedTime := time.Since(start)
@@ -116,7 +118,7 @@ OKEX go版本的v5sdk，仅供学习交流使用。
 
 	defer r.Stop()
 
-	// 订阅产品频道
+	
 	var args []map[string]string
 	arg := make(map[string]string)
 	arg["instType"] = FUTURES
@@ -124,6 +126,8 @@ OKEX go版本的v5sdk，仅供学习交流使用。
 	args = append(args, arg)
 
 	start := time.Now()
+
+	// 订阅产品频道
 	res, _, err := r.PubInstruemnts(OP_SUBSCRIBE, args)
 	if res {
 		usedTime := time.Since(start)
@@ -135,6 +139,8 @@ OKEX go版本的v5sdk，仅供学习交流使用。
 	time.Sleep(30 * time.Second)
 
 	start = time.Now()
+
+	// 取消订阅产品频道
 	res, _, err = r.PubInstruemnts(OP_UNSUBSCRIBE, args)
 	if res {
 		usedTime := time.Since(start)
