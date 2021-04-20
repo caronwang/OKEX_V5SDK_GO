@@ -58,7 +58,7 @@ OKEX go版本的v5sdk，仅供学习交流使用。
 	defer r.Stop()
 
 	var res bool
-
+	// 私有频道需要登录
 	res, _, err = r.Login(apikey, secretKey, passphrase)
 	if res {
 		fmt.Println("登录成功！")
