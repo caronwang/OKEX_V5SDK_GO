@@ -660,8 +660,10 @@ func (a *WsClient) Stop() error {
 	}
 
 	a.isStarted = false
-
-	a.conn.Close()
+	
+	if a.conn != nil {
+		a.conn.Close()
+	}
 	close(a.errCh)
 	close(a.sendCh)
 	close(a.resCh)
