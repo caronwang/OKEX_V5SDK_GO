@@ -93,21 +93,22 @@ func CalCrc32(askDepths [][]string, bidDepths [][]string) (bytes.Buffer, int32) 
 					(askDepths)[i][0], (askDepths)[i][1]))
 		}
 	} else {
-		for i := 0; i < crcBidDepth; i++ {
-			if crc32BaseBuffer.Len() > 0 {
-				crc32BaseBuffer.WriteString(":")
+
+		var crcArr []string
+		for i, j := 0, 0; i < crcBidDepth || j < crcAskDepth; {
+
+			if i < crcBidDepth {
+				crcArr = append(crcArr, fmt.Sprintf("%v:%v", (bidDepths)[i][0], (bidDepths)[i][1]))
+				i++
 			}
-			crc32BaseBuffer.WriteString(
-				fmt.Sprintf("%v:%v", (bidDepths)[i][0], (bidDepths)[i][1]))
+
+			if j < crcAskDepth {
+				crcArr = append(crcArr, fmt.Sprintf("%v:%v", (askDepths)[j][0], (askDepths)[j][1]))
+				j++
+			}
 		}
 
-		for i := 0; i < crcAskDepth; i++ {
-			if crc32BaseBuffer.Len() > 0 {
-				crc32BaseBuffer.WriteString(":")
-			}
-			crc32BaseBuffer.WriteString(
-				fmt.Sprintf("%v:%v", (askDepths)[i][0], (askDepths)[i][1]))
-		}
+		crc32BaseBuffer.WriteString(strings.Join(crcArr, ":"))
 	}
 
 	expectCrc32 := int32(crc32.ChecksumIEEE(crc32BaseBuffer.Bytes()))
