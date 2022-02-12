@@ -430,7 +430,6 @@ func (a *WsClient) receive() {
 
 		ctx := context.Background()
 		ctx, cancel := context.WithTimeout(ctx, time.Millisecond*1000)
-		defer cancel()
 		select {
 		/*
 			丢弃消息容易引发数据处理处理错误
@@ -439,6 +438,7 @@ func (a *WsClient) receive() {
 		// 	log.Println("等待超时，消息丢弃 - ", data)
 		case ch <- &Msg{Timestamp: timestamp, Info: data}:
 		}
+		cancel()
 	}
 }
 
