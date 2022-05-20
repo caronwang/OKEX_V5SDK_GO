@@ -1,4 +1,4 @@
-module v5sdk_go
+module okex_v5sdk_go
 
 go 1.15
 
